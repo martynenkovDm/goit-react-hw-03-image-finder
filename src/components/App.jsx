@@ -6,7 +6,8 @@ import { LoadButton } from './LoadButton/LoadButton';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
 import ErrorImages from 'components/ErrorImages/ErrorImages';
-import { ToastContainer, toast } from 'react-toastify';
+import { notifyOptions } from 'notify/notify';
+import { toast } from 'react-toastify';
 
 const Status = {
   IDLE: 'idle',
@@ -53,13 +54,11 @@ export default class App extends Component {
         }));
       } else {
         this.setState({ status: Status.REJECTED });
-        toast.info('No images found', {
-          position: toast.POSITION.BOTTOM_CENTER,
-          autoClose: 2000,
-        });
+        toast.info('No images found', notifyOptions);
       }
-    } catch (error) {
-      this.setState({ error, status: Status.REJECTED });
+    } catch (myError) {
+      this.setState({ error: myError, status: Status.REJECTED });
+      toast.info(myError, notifyOptions);
     }
   }
 
@@ -110,11 +109,10 @@ export default class App extends Component {
           <LoadButton onLoadMore={this.handleLoadMore} />
         )}
         {status === 'pending' && <Loader />}
-        <ToastContainer autoClose={2000} />
         {showModal && (
           <Modal url={modalImage} onClose={this.handleModalClose} />
         )}
-        {status === 'rejected' && <ErrorImages message={error.message} />}
+        {status === 'rejected' && <ErrorImages message={error} />}
       </>
     );
   }
