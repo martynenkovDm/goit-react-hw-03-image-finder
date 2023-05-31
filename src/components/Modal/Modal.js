@@ -5,8 +5,6 @@ import { ModalBackdrop, ModalContent, ModalPicture } from './Modal.styled';
 
 const modalRoot = document.getElementById('modal-root');
 export default class Modal extends Component {
-  state = {};
-
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
   }

@@ -29,20 +29,19 @@ export default class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    if (prevState.inputValue !== this.state.inputValue) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.valueInput !== this.state.valueInput
+    ) {
       this.setState({ status: Status.PENDING });
-      this.setState({ images: [] });
       this.handleFetch();
-    } else if (prevState.page !== this.state.page) {
-      this.setState({ status: Status.PENDING });
-      setTimeout(() => this.handleFetch(), 1000);
     }
   }
 
   async handleFetch() {
     try {
-      const { inputValue, page } = this.state;
-      const images = await getImages(inputValue, page);
+      const { valueInput, page } = this.state;
+      const images = await getImages(valueInput, page);
       console.log(images);
 
       if (images.total !== 0) {
@@ -63,12 +62,9 @@ export default class App extends Component {
   }
 
   getInputValue = inputValue => {
-    this.setState({ inputValue: inputValue, page: 1 });
+    this.setState({ valueInput: inputValue, page: 1 });
   };
 
-  handleOnSubmit = e => {
-    this.setState({ inputValue: e.target.value });
-  };
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
@@ -102,7 +98,6 @@ export default class App extends Component {
           placeholder="Search images and photos"
           value={valueInput}
           getInputValue={this.getInputValue}
-          onSubmit={this.handleOnSubmit}
         />
         <ImageGallery images={images} toggleModal={this.setModalImg} />
         {images.length > 0 && status !== 'pending' && page < totalPages && (
